@@ -12,4 +12,7 @@
                    descriptors="${descriptor.winRMOperationDescriptors}"
                    targetType="${com.spcow.winrmclient.WinRMOperation.class}" />
   </f:block>
+  <f:entry title="Authentication" field="authentication">
+    <f:textbox default="Default" />
+  </f:entry>
 </j:jelly>

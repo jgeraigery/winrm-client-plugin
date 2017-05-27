@@ -36,14 +36,16 @@ public class WinRMClientBuilder extends Builder implements SimpleBuildStep {
     private final
     @CheckForNull
     String credentialsId;
+    private final String authentication;
 
     private final List<WinRMOperation> winRMOperations;
 
     @DataBoundConstructor
-    public WinRMClientBuilder(String hostName, String credentialsId, List<WinRMOperation> winRMOperations) {
+    public WinRMClientBuilder(String hostName, String credentialsId, List<WinRMOperation> winRMOperations, String authentication) {
         this.hostName = hostName;
         this.credentialsId = credentialsId;
         this.winRMOperations = winRMOperations;
+        this.authentication = authentication;
     }
 
     public String getHostName() {
@@ -60,11 +62,15 @@ public class WinRMClientBuilder extends Builder implements SimpleBuildStep {
         return Collections.unmodifiableList(winRMOperations);
     }
 
+    public String getAuthentication() {
+        return (authentication != null) ? authentication : "Default";
+    }
+
     public StandardUsernameCredentials getCredentials(Item project) {
         StandardUsernameCredentials credentials = null;
         try {
 
-            credentials = credentialsId == null ? null : this.lookupSystemCredentials(credentialsId, project);
+            credentials = credentialsId == null ? null : lookupSystemCredentials(credentialsId, project);
             if (credentials != null) {
                 return credentials;
             }
@@ -108,7 +114,7 @@ public class WinRMClientBuilder extends Builder implements SimpleBuildStep {
         if (winRMOperations.size() > 0) {
             for (WinRMOperation item : winRMOperations) {
                 result = item.runOperation(build, workspace, launcher, listener, this.hostName,
-                        this.getUsername(envVars, project), this.getPassword(envVars, project));
+                        this.getUsername(envVars, project), this.getPassword(envVars, project), this.getAuthentication());
                 if (!result) break;
             }
         } else {
@@ -152,9 +158,8 @@ public class WinRMClientBuilder extends Builder implements SimpleBuildStep {
             if (owner == null || !owner.hasPermission(Item.CONFIGURE)) {
                 return new ListBoxModel();
             }
-            return new StandardUsernameListBoxModel().withEmptySelection()
-                    .withAll(CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, owner,
-                            ACL.SYSTEM, Collections.<DomainRequirement>emptyList()));
+            return new StandardUsernameListBoxModel().includeEmptyValue()
+                    .includeAs(ACL.SYSTEM, owner, StandardUsernamePasswordCredentials.class, Collections.<DomainRequirement>emptyList());
         }
 
         @SuppressWarnings("unused")

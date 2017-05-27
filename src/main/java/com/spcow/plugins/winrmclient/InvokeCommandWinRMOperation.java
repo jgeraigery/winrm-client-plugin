@@ -28,7 +28,7 @@ public class InvokeCommandWinRMOperation extends WinRMOperation implements Seria
     }
 
     public boolean runOperation(Run<?, ?> run, FilePath buildWorkspace, Launcher launcher, TaskListener listener,
-                                String hostName, String userName, String password) {
+                                String hostName, String userName, String password, String authentication) {
         boolean result = false;
         try {
             StringBuilder sbCommand = new StringBuilder();
@@ -92,10 +92,14 @@ public class InvokeCommandWinRMOperation extends WinRMOperation implements Seria
             sb.append("\"" + ciUserCommandScriptFile.getRemote() + "\"");
             sb.append(" ");
             sb.append("\"" + hostName + "\"");
-            sb.append(" ");
-            sb.append("\"" + userName + "\"");
-            sb.append(" ");
-            sb.append("\"" + password + "\"");
+            if (userName != null && password != null) {
+                sb.append(" ");
+                sb.append("\"" + userName + "\"");
+                sb.append(" ");
+                sb.append("\"" + password + "\"");
+            }
+            sb.append(" -Authentication ");
+            sb.append("\"" + authentication + "\"");
             CommandInterpreter remoteCommandInterpreter = new CommandInterpreter(sb.toString()) {
                 @Override
                 public String[] buildCommandLine(FilePath script) {

@@ -40,7 +40,7 @@ public class SendFileWinRMOperation extends WinRMOperation implements Serializab
     }
 
     public boolean runOperation(Run<?, ?> run, FilePath buildWorkspace, Launcher launcher, TaskListener listener,
-                                String hostName, String userName, String password) {
+                                String hostName, String userName, String password, String authentication) {
         boolean result = false;
         try {
             StreamSource ssSendFileCommand = new StreamSource(WinRMClientBuilder.class.getResourceAsStream(SEND_FILE_PATH));
@@ -72,14 +72,18 @@ public class SendFileWinRMOperation extends WinRMOperation implements Serializab
             sb.append("\"" + destination + "\"");
             sb.append(" ");
             sb.append("\"" + hostName + "\"");
-            sb.append(" ");
-            sb.append("\"" + userName + "\"");
-            sb.append(" ");
-            sb.append("\"" + password + "\"");
-            if (configurationName != null) {
+            if (userName != null && password != null) {
                 sb.append(" ");
+                sb.append("\"" + userName + "\"");
+                sb.append(" ");
+                sb.append("\"" + password + "\"");
+            }
+            if (configurationName != null) {
+                sb.append(" -Configuration ");
                 sb.append("\"" + configurationName + "\"");
             }
+            sb.append(" -Authentication ");
+            sb.append("\"" + authentication + "\"");
             CommandInterpreter remoteCommandInterpreter = new CommandInterpreter(sb.toString()) {
                 @Override
                 public String[] buildCommandLine(FilePath script) {

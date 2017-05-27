@@ -1,9 +1,9 @@
 function Remote-Invoke-Command
 {
-	[CmdletBinding()]
-	param
-	(
-	    [Parameter(Mandatory)]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]$Path,
 
@@ -11,26 +11,34 @@ function Remote-Invoke-Command
         [ValidateNotNullOrEmpty()]
         [string]$ComputerName,
 
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [string]$UserName,
+        [ValidateNotNull()]
+        $UserName,
 
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Password
-
-	)
+        [ValidateNotNull()]
+        $Password,
+        
+        [System.Management.Automation.Runspaces.AuthenticationMechanism]$Authentication = 'Default'
+    )
 	process
 	{
-	    try
-	    {
-            Write-Host "Connecting to remote host " $ComputerName "...."
-            $SecretDetailsFormatted = ConvertTo-SecureString -AsPlainText -Force -String $Password
-            $CredentialObject = New-Object -typename System.Management.Automation.PSCredential -argumentlist $UserName, $SecretDetailsFormatted
-            $Session = New-PSSession -ComputerName $ComputerName -Credential $CredentialObject
+        try
+        {                
+            $SessionParams = @{
+                ComputerName   = $ComputerName
+                Authentication = $Authentication
+            }
+            if (-not [string]::IsNullOrEmpty($UserName) -and -not [string]::IsNullOrEmpty($Password))
+            {
+                $SessionParams['Credential'] = New-Object System.Management.Automation.PSCredential(
+                    $UserName, 
+                    (ConvertTo-SecureString -AsPlainText -Force -String $Password)
+                )
+            }
+            Write-Host "Connecting to remote host" $ComputerName "...."
+            $Session = New-PSSession @SessionParams
             Write-Host "Connected to remote host."
             Write-Host "Executing commands..."
-            Invoke-Command -Session $Session -FilePath $Path
+            Invoke-Command -Session $Session -FilePath $Path -Verbose -ErrorAction Stop
             Write-Host "Executing commands finished."
         }
         catch
@@ -38,5 +46,12 @@ function Remote-Invoke-Command
             Write-Host $_.Exception.Message
             exit 1
         }
-	}
+        finally 
+        {
+            if ($null -ne $Session) 
+            {
+                Remove-PSSession -Session $Session
+            }
+        }
+    }
 }

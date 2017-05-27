@@ -15,6 +15,7 @@ import javaposse.jobdsl.plugin.DslExtensionMethod;
             credentialsId(String credentialsId)
             sendFile(String source, String destination, String configurationName)
             invokeCommand(String command)
+            authentication(String command = "Default")
         }
     }
  }
@@ -28,6 +29,7 @@ import javaposse.jobdsl.plugin.DslExtensionMethod;
             credentialsId('44620c50-1589-4617-a677-7563985e46e1')
             sendFile('C:\\test.txt','C:\\test', 'DataNoLimits')
             invokeCommand('dir')
+            authentication('CredSSP')   // authentication parameter is optional
           }
         }
     }
@@ -42,6 +44,6 @@ public class WinRMClientJobDslExtension extends ContextExtensionPoint {
     public Object winRMClient(Runnable closure) {
         WinRMClientJobDslContext context = new WinRMClientJobDslContext();
         executeInContext(closure, context);
-        return new WinRMClientBuilder(context.hostName, context.credentialsId, context.winRMOperations);
+        return new WinRMClientBuilder(context.hostName, context.credentialsId, context.winRMOperations, context.authentication);
     }
 }

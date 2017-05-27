@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.spcow.plugins</groupId>
   <artifactId>winrm-client</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.1</version>
   <packaging>hpi</packaging>
 
   <properties>
@@ -34,6 +34,11 @@
       <id>pskumar448</id>
       <name>Suresh Kumar</name>
       <email>pskumar448@gmail.com</email>
+    </developer>
+    <developer>
+      <id>vrimkus</id>
+      <name>Vince Rimkus</name>
+      <email>vrimkus@planview.com</email>
     </developer>
   </developers>
 

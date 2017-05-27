@@ -10,6 +10,7 @@ public class WinRMClientJobDslContext implements Context {
     List<WinRMOperation> winRMOperations = new ArrayList<>();
     String hostName;
     String credentialsId;
+    String authentication;
 
     void hostName(String hostName) {
         this.hostName = hostName;
@@ -19,6 +20,10 @@ public class WinRMClientJobDslContext implements Context {
         this.credentialsId = credentialsId;
     }
 
+    void authentication(String authentication) {
+        this.authentication = authentication;
+    }
+
     void sendFile(String source, String destination, String configurationName) {
         SendFileWinRMOperation sendFileWinRMOperation = new SendFileWinRMOperation(source, destination, configurationName);
         winRMOperations.add(sendFileWinRMOperation);
@@ -26,6 +31,6 @@ public class WinRMClientJobDslContext implements Context {
 
     void invokeCommand(String command) {
         InvokeCommandWinRMOperation invokeCommandWinRMOperation = new InvokeCommandWinRMOperation(command);
-        winRMOperations.add(invokeCommandWinRMOperation);
+        winRMOperations.add(invokeCommandWinRMOperation);    
     }
 }

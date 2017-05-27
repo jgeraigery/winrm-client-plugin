@@ -24,3 +24,6 @@ libsrc/*
 /.project
 /.settings*
 /target/
+
+# VS Code
+.vscode/*

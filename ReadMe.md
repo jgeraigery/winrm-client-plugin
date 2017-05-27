@@ -14,10 +14,11 @@ At present following Operations implemented:
             winRMClient {
                 hostName('192.168.1.2')
                 credentialsId('44620c50-1589-4617-a677-7563985e46e1')
+                authentication('CredSSP')
                 sendFile('C:\\test.txt','C:\\test', 'DataNoLimits')
                 invokeCommand('dir')
             }
         }
     }
 # Jenkins Pipeline example
-    winRMClient credentialsId: '549bdb9b-0d36-4c21-948a-ca0a9ef6575f', hostName: '192.168.1.7', winRMOperations: [invokeCommand('dir'), sendFile(configurationName: 'DataNoLimits', destination: 'C:\\test', source: 'C:\\test.txt')]
+    winRMClient credentialsId: '549bdb9b-0d36-4c21-948a-ca0a9ef6575f', hostName: '192.168.1.7', authentication('NTLM'), winRMOperations: [invokeCommand('dir'), sendFile(configurationName: 'DataNoLimits', destination: 'C:\\test', source: 'C:\\test.txt')]
